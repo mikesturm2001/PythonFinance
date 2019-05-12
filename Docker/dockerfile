@@ -1,0 +1,16 @@
+#
+# Building a Docker Image with the latest Ubuntu version and python
+#
+FROM ubuntu:latest
+
+MAINTAINER sturm
+
+ADD install.sh /
+
+RUN chmod u+x /install.sh
+
+RUN /install.sh
+
+ENV PATH /root/miniconda3/bin:$PATH
+
+CMD ["ipython"]
