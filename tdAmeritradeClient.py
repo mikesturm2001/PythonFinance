@@ -50,8 +50,6 @@ class tdAmeritradeClient:
             self.authentication(self.client_id, self.redirect_uri)
         elif self.auth.get('creationTime') < datetime.now() - timedelta(minutes=29):
             self.refresh_token(self.auth.get('refresh_token'), self.client_id)
-        else:
-            raise Exception('Auth is broken')
 
     #Method to authorize the application
     def authentication(self, client_id, redirect_uri):
