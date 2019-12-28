@@ -8,6 +8,7 @@ from shutil import which
 import urllib.parse as up
 from datetime import datetime, timedelta
 
+#Class is based on the following guide: https://www.reddit.com/r/algotrading/comments/c81vzq/td_ameritrade_api_access_2019_guide/
 class tdAmeritradeClient:
 
     def __init__(self, client_id, redirect_uri):
@@ -79,7 +80,7 @@ class tdAmeritradeClient:
 
         driver.get(url)
 
-        # Fully automated oauth2 authentication (if tdauser and tdapass were intputed into the function, or found as environment variables)
+        # Due to 2-factor auth login constraints url must be manually entered. 
         authUrl = input('after giving access paste URL here, hit enter to continue')
         code = up.unquote(authUrl.split('code=')[1])
 
