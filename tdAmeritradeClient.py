@@ -11,21 +11,25 @@ from datetime import datetime, timedelta
 class tdAmeritradeClient:
 
     def __init__(self, client_id, redirect_uri):
+        #TD Ameritrade requires '@ANER.OAUTHAP' added to the API Key
         self.client_id = client_id + '@AMER.OAUTHAP'
         self.redirect_uri = redirect_uri
         self.auth = {}
 
+    #Get method for calling unsecured TD Ameritrade endpoints
     def get(self, url, queryParams = "", body = {}):
         formattedUrl = self.formatUrl(url, queryParams)
         resp = requests.get(formattedUrl, headers = self.getHeaders())
         return resp.json()
 
+    #Get method for calling secured TD Ameritrade endpoints
     def secureGet(self, url, queryParams = "", body = {}):
         self.checkAuth()
         formattedUrl = self.formatUrl(url, queryParams)
         resp = requests.get(url = formattedUrl, headers = self.getHeaders(), data = body)
         return resp.json()
 
+    #Method to set headers for request
     def getHeaders(self):
         if 'access_token' in self.auth:
             return {'Content-Type': 'application/x-www-form-urlencoded',
@@ -33,12 +37,14 @@ class tdAmeritradeClient:
         else:
             return {'Content-Type': 'application/x-www-form-urlencoded'}
 
+    #Method to add query parameters to request URL
     def formatUrl(self, url, queryParams):
         if queryParams is "":
             return url + '?apikey=' + self.client_id
         else:
             return url + '?apikey=' + self.client_id + '&' + queryParams
 
+    #Method to get if application has been authorized
     def checkAuth(self):
         if 'creationTime' not in self.auth:
             self.authentication(self.client_id, self.redirect_uri)
@@ -47,6 +53,7 @@ class tdAmeritradeClient:
         else:
             raise Exception('Auth is broken')
 
+    #Method to authorize the application
     def authentication(self, client_id, redirect_uri):
         url = 'https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=' + up.quote(redirect_uri) + '&client_id=' + up.quote(client_id)
 
@@ -95,7 +102,7 @@ class tdAmeritradeClient:
         self.auth['creationTime'] = datetime.now()
         return self.auth
 
-
+    #Method to refresh the token when it is about to expire
     def refresh_token(self, refresh_token, client_id):
         resp = requests.post('https://api.tdameritrade.com/v1/oauth2/token',
                          headers={'Content-Type': 'application/x-www-form-urlencoded'},
